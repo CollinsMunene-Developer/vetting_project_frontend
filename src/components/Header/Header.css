@@ -1,0 +1,86 @@
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--background-secondary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: var(--font-size-large);
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-size: var(--font-size-small);
+}
+
+.nav-links a:hover {
+  color: var(--text-primary);
+}
+
+.nav-links svg {
+  font-size: 1.2em;
+}
+
+button {
+  background: var(--accent-color);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 5px;   
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: var(--font-size-small);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--accent-color-light);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.reg_button,
+.login_button {
+  margin-left: var(--spacing-sm);
+}
+
+/* Icon-only buttons (notifications, settings) */
+.nav-links a[href="/notifications"],
+.nav-links a[href="/settings"] {
+  background-color: transparent;
+  padding: var(--spacing-xs);
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.nav-links a[href="/notifications"]:hover,
+.nav-links a[href="/settings"]:hover {
+  background-color: var(--background-tertiary);
+}

@@ -1,0 +1,99 @@
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--bg-secondary);
+    padding: var(--spacing-lg);
+  }
+  
+  .login-container {
+    background-color: var(--bg-primary);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-xl);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  h1 {
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .form-group {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-secondary);
+  }
+  
+  input {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--text-secondary);
+    border-radius: var(--border-radius);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: var(--font-size-normal);
+  }
+  
+  .password-input {
+    position: relative;
+  }
+  
+  .password-toggle {
+    position: absolute;
+    right: var(--spacing-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+  
+  .btn-login {
+    width: 100%;
+    padding: var(--spacing-sm);
+    background-color: var(--accent-color);
+    color: var(--text-primary);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-normal);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: var(--spacing-md);
+  }
+  
+  .btn-login:hover {
+    background-color: var(--accent-hover);
+  }
+  
+  .login-footer {
+    margin-top: var(--spacing-lg);
+    text-align: center;
+  }
+  
+  .forgot-password {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: var(--font-size-small);
+  }
+  
+  .login-footer p {
+    margin-top: var(--spacing-md);
+    color: var(--text-secondary);
+    font-size: var(--font-size-small);
+  }
+  
+  .login-footer a {
+    color: var(--accent-color);
+    text-decoration: none;
+  }
+  
+  .login-footer a:hover {
+    text-decoration: underline;
+  }
