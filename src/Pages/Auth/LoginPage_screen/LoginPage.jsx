@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import './LoginPage.css';
-import { useAuthNavigation
-    
- } from '../authNavigation';
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
+import { loginimg } from "../../../assets/assets";
+import "./LoginPage.css";
+
 const LoginPage = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -24,11 +24,29 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission (e.g., send data to backend)
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
+  };
+
+  const navigate = useNavigate();
+
+  const goToReset = (e) => {
+    e.preventDefault();
+    navigate("/reset-password");
+  };
+
+  const goToRegister = (e) => {
+    e.preventDefault();
+    navigate("/register");
   };
 
   return (
     <div className="login-page">
+      <div className="login-background">
+        <h1>Welcome Back!</h1>
+        <p>Login to your account</p>
+        <img src={loginimg} alt="Login" style={{ height: "300px", width: "100%" }} />
+      </div>
+
       <div className="login-container">
         <h1>Login</h1>
         <form onSubmit={handleSubmit}>
@@ -47,7 +65,7 @@ const LoginPage = () => {
             <label htmlFor="password">Password</label>
             <div className="password-input">
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
                 value={formData.password}
@@ -61,11 +79,17 @@ const LoginPage = () => {
               />
             </div>
           </div>
-          <button type="submit" className="btn btn-login">Login</button>
+          <button type="submit" className="btn btn-login">
+            Login
+          </button>
         </form>
         <div className="login-footer">
-          <a href="#forgot-password" className="forgot-password">Forgot Password?</a>
-          <p>Don't have an account? <a href="#register">Register</a></p>
+          <a href="#forgot-password" className="forgot-password" onClick={goToReset}>
+            Forgot Password?
+          </a>
+          <p>
+            Don't have an account? <a href="/register" onClick={goToRegister}>Register</a>
+          </p>
         </div>
       </div>
     </div>

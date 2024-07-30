@@ -5,16 +5,25 @@ import ContactPage from "./Pages/ContactPage_screen/ContactPage";
 import RegisterPage from "./Pages/Auth/RegisterPage_screen/RegisterPage";
 import LoginPage from "./Pages/Auth/LoginPage_screen/LoginPage";
 import ResetPassword from "./Pages/Auth/ResetPassword/ResetPassword";
+import General from "./Pages/VettingPage_screen/General";
+import Technical from "./Pages/VettingPage_screen/Technical";
+import WelcomePage from "./Pages/VettingPage_screen/welcomePage";
 
 const App = () => {
   return (
-    <>
-    {/* <ResetPassword /> */}
-    {/* < LoginPage />
-    < RegisterPage /> */}
-    {/* <ContactPage /> */}
-    {/* <DetailsPage /> */}
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<DetailsPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/general" element={<General />} />
+        <Route path="/technical" element={<Technical />} />
+        <Route path="/welcome" element={<WelcomePage />} />
+      </Routes>
+    </Router>
   )
 };
 

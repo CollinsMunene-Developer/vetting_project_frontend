@@ -1,7 +1,16 @@
 import React from 'react';
 import './Hero_3.css';
+import { useNavigate } from 'react-router-dom';
 
 const Hero_3 = () => {
+  const navigate = useNavigate();
+  const handleLearnMore = () => {
+    navigate('/about');
+  };
+  const handleStartVetting = () => {
+    navigate('/welcome');
+  };
+
   return (
     <section className="hero-3">
       <div className="container">
@@ -15,8 +24,8 @@ const Hero_3 = () => {
             </p>
           </div>
           <div className="hero-3-buttons">
-            <button className="btn btn-primary">Start Vetting</button>
-            <button className="btn btn-secondary">Learn More</button>
+            <button className="btn btn-primary" onClick={handleStartVetting}>Start Vetting</button>
+            <button className="btn btn-secondary" onClick={handleLearnMore}>Learn More</button>
           </div>
         </div>
       </div>

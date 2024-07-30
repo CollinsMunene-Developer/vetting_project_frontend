@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Hero_4.css';
+import {useNavigate} from 'react-router-dom';
 
 const Hero_4 = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -23,6 +24,14 @@ const Hero_4 = () => {
     setCurrentSlide((prev) => (prev - 1 + companies.length) % companies.length);
   };
 
+  const navigate = useNavigate();
+  const handleLearnMore = () => {
+    navigate('/about');
+  };
+  const handleStartVetting = () => {
+    navigate('/welcome');
+  };
+
   return (
     <section className="hero-4">
       <div className="container">
@@ -42,8 +51,8 @@ const Hero_4 = () => {
         </div>
         
         <div className="hero-4-buttons">
-          <button className="btn btn-primary">Start Vetting</button>
-          <button className="btn btn-secondary">Learn More</button>
+          <button className="btn btn-primary" onClick={handleStartVetting}>Start Vetting</button>
+          <button className="btn btn-secondary" onClick={handleLearnMore}>Learn More</button>
         </div>
       </div>
     </section>
