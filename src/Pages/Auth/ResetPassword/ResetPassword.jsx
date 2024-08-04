@@ -2,38 +2,73 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import './ResetPassword.css';
+import axios from 'axios';
 
 const ResetPassword = () => {
-  const [step, setStep] = useState('request'); // 'request', 'verify', 'reset'
+  const [step, setStep] = useState('request');
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-  const handleRequestReset = (e) => {
+  const handleRequestReset = async (e) => {
     e.preventDefault();
-    // TODO: Send reset request to backend
-    console.log('Reset requested for:', email);
-    setStep('verify');
+    setError('');
+    setMessage('');
+    try {
+      const response = await axios.post('http://localhost:3001/api/auth/reset-password', { email });
+      console.log('Reset requested for:', email);
+      setMessage(response.data.message);
+      setStep('verify');
+    } catch (err) {
+      console.error("Error sending reset request:", err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || "An error occurred while requesting password reset");
+    }
   };
 
-  const handleVerifyCode = (e) => {
+  const handleVerifyCode = async (e) => {
     e.preventDefault();
-    // TODO: Verify code with backend
-    console.log('Verifying code:', verificationCode);
-    setStep('reset');
+    setError('');
+    setMessage('');
+    try {
+      const response = await axios.post('http://localhost:3001/api/auth/verify-reset-token', {
+        email,
+        token: verificationCode
+      });
+      console.log('Code verified successfully');
+      setMessage(response.data.message || "Code verified successfully");
+      setStep('reset');
+    } catch (err) {
+      console.error("Error verifying code:", err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || "Invalid verification code. Please try again.");
+    }
   };
 
-  const handleResetPassword = (e) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
+    setError('');
+    setMessage('');
     if (newPassword !== confirmPassword) {
-      alert("Passwords don't match!");
+      setError("Passwords don't match!");
       return;
     }
-    // TODO: Send new password to backend
-    console.log('Resetting password');
-    // Redirect to login page after successful reset
+    try {
+      const response = await axios.post('http://localhost:3001/api/auth/set-new-password', {
+        email,
+        token: verificationCode,
+        newPassword
+      });
+      setMessage(response.data.message || "Password reset successfully");
+      //redirect to login Page
+      window.location.href = '/login';
+      
+    } catch (err) {
+      console.error("Error resetting password:", err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || "An error occurred while resetting the password");
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -44,6 +79,8 @@ const ResetPassword = () => {
     <div className="reset-password-page">
       <div className="reset-password-container">
         <h1>Reset Password</h1>
+        {message && <p className="message success">{message}</p>}
+        {error && <p className="message error">{error}</p>}
         {step === 'request' && (
           <form onSubmit={handleRequestReset}>
             <div className="form-group">

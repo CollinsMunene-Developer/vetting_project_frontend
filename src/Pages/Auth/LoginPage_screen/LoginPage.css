@@ -50,7 +50,7 @@ body, html {
   flex-direction: column;
   justify-content: center;
   padding: 2rem;
-  background-color: #ffffff;
+  background-color: #2881c9;
   box-shadow: -10px 0 20px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
 }
@@ -79,7 +79,7 @@ input {
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: black;
-  color: #333;
+  color: black;
   font-size: 1rem;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
@@ -133,12 +133,12 @@ input:focus {
 
 .login-footer p {
   margin-top: 1rem;
-  color: #666;
+  color: var(--accent-color);
   font-size: 0.9rem;
 }
 
 .login-footer a {
-  color: #4a90e2;
+  color: #fff;
   text-decoration: none;
   font-weight: 600;
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash, faSpinner, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle, faMicrosoft } from "@fortawesome/free-brands-svg-icons";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -17,13 +17,11 @@ const RegisterPage = () => {
     mobile: "",
     password: "",
     confirmPassword: "",
-    profilePicture: null,
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,82 +39,69 @@ const RegisterPage = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData({ ...formData, profilePicture: file });
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) =>{
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!");
+    setIsLoading(true);
+
+    if(formData.passwword !== formData.confirmPassword){
+      alert("Passwords do not match");
       return;
     }
-    setIsLoading(true);
-    try {
-      const formDataToSend = new FormData();
-      for (const key in formData) {
-        if (key !== 'confirmPassword') {
-          formDataToSend.append(key, formData[key]);
-        }
-      }
-      const response = await axios.post(
-        "http://localhost:3001/api/auth/register",
-        formDataToSend,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
-      console.log("Registration successful:", response.data);
-      // Handle successful registration (e.g., redirect to login page or dashboard)
-    } catch (err) {
-      console.error("Registration failed:", err.response?.data || err.message);
-      alert("Registration failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+
+    if(formData.password.length < 8){
+      alert("Password must be at least 8 characters long");
+      return;
     }
-  };
 
-  const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:3001/api/auth/google';
-    console.log("Google login clicked");
-  };
+    if(!formData.mobile){
+      alert("Please enter a valid phone number");
+      return;
+    }
+    if(!formData.email){
+      alert("Please enter a valid email address");
+      return;
+    }
+    if(!formData.username){
+      alert("Please enter a valid username");
+      return;
+    }
+    if(!formData.firstName){
+      alert("Please enter your first name");
+      return;
+    }
+    if(!formData.lastName){
+      alert("Please enter your last name");
+      return;
+    }
 
-  const handleMicrosoftLogin = () => {
-    window.location.href = 'http://localhost:3001/api/auth/microsoft';
-    console.log("Microsoft login clicked");
+    try{
+      const response = await axios.post('http://localhost:3001/api/auth/register')
+      console.log(response.data);
+      alert("Registration successful");
+      window.location.href = "/login";
+      setIsLoading(false);
+
+    }
+    catch(error){
+      alert(error.response.data.message);
+      setIsLoading(true);
+    }
+
+    
+  }
+  const handleSocialLogin = (provider) => {
+    window.location.href = `http://localhost:3001/api/auth/${provider}`;
+    console.log(`${provider} login clicked`);
   };
 
   return (
     <div className="register-page">
       <div className="register-img">
-        <img src={registerImg} alt="Register-image" />
+        <img src={registerImg} alt="Register" />
       </div>
       <div className="register-container">
         <h1>Create an Account</h1>
-        <form onSubmit={handleSubmit}>
-          <div className="profile-picture-upload">
-            <label htmlFor="profilePicture" className="profile-picture-label">
-              {previewUrl ? (
-                <img src={previewUrl} alt="Profile Preview" className="profile-preview" />
-              ) : (
-                <FontAwesomeIcon icon={faUpload} className="upload-icon" />
-              )}
-            </label>
-            <input
-              type="file"
-              id="profilePicture"
-              name="profilePicture"
-              accept="image/*"
-              onChange={handleFileChange}
-              hidden
-            />
-          </div>
+        <form onSubmit={handleRegister}>
           <div className="name-fields">
             <div className="form-group">
               <label htmlFor="firstName">First Name</label>
@@ -225,10 +210,10 @@ const RegisterPage = () => {
         </form>
         <div className="social-login">
           <p>Or continue with:</p>
-          <button onClick={handleGoogleLogin} className="btn btn-secondary">
+          <button onClick={() => handleSocialLogin('google')} className="btn btn-secondary">
             <FontAwesomeIcon icon={faGoogle} /> Google
           </button>
-          <button onClick={handleMicrosoftLogin} className="btn btn-secondary">
+          <button onClick={() => handleSocialLogin('microsoft')} className="btn btn-secondary">
             <FontAwesomeIcon icon={faMicrosoft} /> Microsoft
           </button>
         </div>

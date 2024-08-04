@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Technical.css";
+import AnswerQuestions from './AnswerQuestions';
 
 const Technical = () => {
   const [step, setStep] = useState(1);
@@ -15,34 +16,29 @@ const Technical = () => {
     { name: "", years: "", level: "" },
     { name: "", years: "", level: "" },
   ]);
-  const [questions, setQuestions] = useState({});
-  const [currentLanguage, setCurrentLanguage] = useState("");
-  const [answers, setAnswers] = useState({});
-  const [evaluationResult, setEvaluationResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const savedProgress = localStorage.getItem('vettingProgress');
+    const savedProgress = localStorage.getItem("vettingProgress");
     if (savedProgress) {
       const progress = JSON.parse(savedProgress);
       setStep(progress.step);
       setCandidateId(progress.candidateId);
-      setAnswers(progress.answers);
     }
   }, []);
 
   useEffect(() => {
     saveProgress();
-  }, [step, candidateId, answers]);
+  }, [step, candidateId]);
 
   const saveProgress = () => {
     const progress = {
       step,
       candidateId,
-      answers,
     };
-    localStorage.setItem('vettingProgress', JSON.stringify(progress));
+    localStorage.setItem("vettingProgress", JSON.stringify(progress));
   };
 
   const handleDetailsChange = (e) => {
@@ -58,23 +54,13 @@ const Technical = () => {
     setLanguages(updatedLanguages);
   };
 
-  const handleAnswerChange = (questionId, value) => {
-    setAnswers(prev => ({
-      ...prev,
-      [currentLanguage]: {
-        ...prev[currentLanguage],
-        [questionId]: value
-      }
-    }));
-  };
-
   const submitDetails = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
     try {
       const response = await axios.post(
-        "https://vettingapp.agreeableriver-d2514013.westus2.azurecontainerapps.io/candidate/submitDetails",
+        "http://localhost:3001/candidate/submitDetails",
         candidateDetails
       );
       setCandidateId(response.data.candidateId);
@@ -90,69 +76,33 @@ const Technical = () => {
   const submitLanguages = async (e) => {
     e.preventDefault();
     if (!candidateId) {
-      setError("Candidate ID is missing. Please go back and submit your details first.");
+      setError(
+        "Candidate ID is missing. Please go back and submit your details first."
+      );
       return;
     }
-    setIsLoading(true);
+    setIsGeneratingQuestions(true);
     setError(null);
     try {
-      const response = await axios.post(
-        "https://vettingapp.agreeableriver-d2514013.westus2.azurecontainerapps.io/candidate/submitLanguages",
+      await axios.post(
+        "http://localhost:3001/candidate/submitLanguages",
         {
           candidateId,
-          languages: languages.filter(lang => lang.name).map((lang) => ({
-            name: lang.name,
-            years: lang.years,
-            level: lang.level
-          })),
+          languages: languages
+            .filter((lang) => lang.name)
+            .map((lang) => ({
+              name: lang.name,
+              years: lang.years,
+              level: lang.level,
+            })),
         }
       );
-      setQuestions(response.data.questions);
-      const firstLanguage = Object.keys(response.data.questions)[0];
-      setCurrentLanguage(firstLanguage);
       setStep(3);
     } catch (error) {
       console.error("Error submitting languages:", error);
       setError("Failed to submit languages. Please try again.");
     } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const submitAnswers = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await axios.post(
-        "https://vettingapp.agreeableriver-d2514013.westus2.azurecontainerapps.io/candidate/submitAnswers",
-        {
-          candidateId,
-          answers: Object.entries(answers).flatMap(([language, languageAnswers]) => 
-            Object.entries(languageAnswers).map(([questionId, answer]) => ({
-              language,
-              questionId,
-              answer
-            }))
-          ),
-        }
-      );
-      setEvaluationResult(response.data);
-      setStep(4);
-    } catch (error) {
-      console.error("Error submitting answers:", error);
-      setError("Failed to submit answers. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const nextLanguage = () => {
-    const languageKeys = Object.keys(questions);
-    const currentIndex = languageKeys.indexOf(currentLanguage);
-    if (currentIndex < languageKeys.length - 1) {
-      setCurrentLanguage(languageKeys[currentIndex + 1]);
-    } else {
-      submitAnswers();
+      setIsGeneratingQuestions(false);
     }
   };
 
@@ -235,54 +185,24 @@ const Technical = () => {
                 </select>
               </div>
             ))}
-            <button type="submit" className="btn" disabled={isLoading}>
-              {isLoading ? <span className="loader"></span> : "Generate Questions"}
+            <button
+              type="submit"
+              className="btn"
+              disabled={isGeneratingQuestions}
+            >
+              {isGeneratingQuestions ? (
+                <>
+                  <span className="loader"></span>
+                  Generating Questions...
+                </>
+              ) : (
+                "Generate Questions"
+              )}
             </button>
           </form>
         );
       case 3:
-        return (
-          <div>
-            <h2>Technical Questions - {currentLanguage}</h2>
-            {questions[currentLanguage]?.map((q, index) => (
-              <div key={index} className="question">
-                <p>{q.question.replace(/^Of course! Here are some questions to test your .* knowledge of .*:\n\n/, '')}</p>
-                <textarea
-                  value={answers[currentLanguage]?.[q.id] || ""}
-                  onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                  placeholder="Your answer"
-                  required
-                />
-              </div>
-            ))}
-            <button onClick={nextLanguage} className="btn" disabled={isLoading}>
-              {isLoading ? <span className="loader"></span> : 
-                (Object.keys(questions).indexOf(currentLanguage) === Object.keys(questions).length - 1 ? "Submit All Answers" : "Next Language")}
-            </button>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="evaluation-result">
-            <h2>Evaluation Result</h2>
-            <p>
-              You have {evaluationResult.hasPassed ? "passed" : "not passed"}{" "}
-              the evaluation.
-            </p>
-            <p>
-              Correct answers:{" "}
-              {
-                evaluationResult.evaluationResult.filter((r) => r.isRelevant)
-                  .length
-              }
-            </p>
-            <p>Total questions: {evaluationResult.evaluationResult.length}</p>
-            <p>
-              An email with detailed results has been sent to your provided
-              email address.
-            </p>
-          </div>
-        );
+        return <AnswerQuestions candidateId={candidateId} />;
       default:
         return null;
     }
@@ -303,4 +223,4 @@ const Technical = () => {
   );
 };
 
-export default Technical;
+export default Technical; 

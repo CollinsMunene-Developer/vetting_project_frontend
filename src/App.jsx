@@ -8,6 +8,8 @@ import ResetPassword from "./Pages/Auth/ResetPassword/ResetPassword";
 import General from "./Pages/VettingPage_screen/General";
 import Technical from "./Pages/VettingPage_screen/Technical";
 import WelcomePage from "./Pages/VettingPage_screen/welcomePage";
+import UserDashboard from "./Pages/Dashboard/userDashboard";
+import AnswerQuestions from "./Pages/VettingPage_screen/AnswerQuestions";
 
 const App = () => {
   return (
@@ -22,6 +24,8 @@ const App = () => {
         <Route path="/general" element={<General />} />
         <Route path="/technical" element={<Technical />} />
         <Route path="/welcome" element={<WelcomePage />} />
+        <Route path="/dashboard" element={<UserDashboard />} />
+        <Route path="/answer" element={<AnswerQuestions />} />
       </Routes>
     </Router>
   )

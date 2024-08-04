@@ -4,6 +4,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { loginimg } from "../../../assets/assets";
 import "./LoginPage.css";
+import axios from "axios";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,10 @@ const LoginPage = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,13 +26,23 @@ const LoginPage = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Handle form submission (e.g., send data to backend)
-    console.log("Form submitted:", formData);
+    setError("");
+    setIsLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/api/auth/login', formData);
+      console.log('Login success:', response.data);
+      localStorage.setItem('token', response.data.token);
+      navigate('/');
+      window.location.reload();
+    } catch (error) {
+      console.error('Login failed:', error);
+      setError(error.response?.data?.message || "An error occurred during login");
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  const navigate = useNavigate();
 
   const goToReset = (e) => {
     e.preventDefault();
@@ -49,7 +64,8 @@ const LoginPage = () => {
 
       <div className="login-container">
         <h1>Login</h1>
-        <form onSubmit={handleSubmit}>
+        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleLogin}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -79,8 +95,8 @@ const LoginPage = () => {
               />
             </div>
           </div>
-          <button type="submit" className="btn btn-login">
-            Login
+          <button type="submit" className="btn btn-login" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
         <div className="login-footer">

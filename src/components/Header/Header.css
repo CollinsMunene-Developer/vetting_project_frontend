@@ -1,4 +1,4 @@
-/* Header */
+/* Header.css */
 .header {
   display: flex;
   justify-content: space-between;
@@ -14,7 +14,7 @@
   color: var(--accent-color);
 }
 
-.nav-links {
+.nav-links ul {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
@@ -42,10 +42,6 @@
   color: var(--text-primary);
 }
 
-.nav-links svg {
-  font-size: 1.2em;
-}
-
 button {
   background: var(--accent-color);
   color: var(--text-primary);
@@ -71,16 +67,57 @@ button:hover {
   margin-left: var(--spacing-sm);
 }
 
-/* Icon-only buttons (notifications, settings) */
-.nav-links a[href="/notifications"],
-.nav-links a[href="/settings"] {
-  background-color: transparent;
-  padding: var(--spacing-xs);
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
+.user-info {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.nav-links a[href="/notifications"]:hover,
-.nav-links a[href="/settings"]:hover {
-  background-color: var(--background-tertiary);
+.user-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.user-email {
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 200px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-dropdown p {
+  margin: 0;
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+}
+
+.user-dropdown button {
+  margin-top: var(--spacing-xs);
+  width: 100%;
+  justify-content: center;
 }
