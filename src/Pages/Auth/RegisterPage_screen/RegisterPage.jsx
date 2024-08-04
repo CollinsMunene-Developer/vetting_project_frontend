@@ -7,8 +7,10 @@ import "react-phone-input-2/lib/style.css";
 import "./RegisterPage.css";
 import axios from "axios";
 import { registerImg } from "../../../assets/assets";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -22,6 +24,7 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,59 +42,50 @@ const RegisterPage = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const handleRegister = async (e) =>{
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    return regex.test(password);
+  };
+
+  const handleRegister = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    if(formData.passwword !== formData.confirmPassword){
-      alert("Passwords do not match");
-      return;
-    }
-
-    if(formData.password.length < 8){
-      alert("Password must be at least 8 characters long");
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
       return;
     }
 
-    if(!formData.mobile){
-      alert("Please enter a valid phone number");
-      return;
-    }
-    if(!formData.email){
-      alert("Please enter a valid email address");
-      return;
-    }
-    if(!formData.username){
-      alert("Please enter a valid username");
-      return;
-    }
-    if(!formData.firstName){
-      alert("Please enter your first name");
-      return;
-    }
-    if(!formData.lastName){
-      alert("Please enter your last name");
+    if (!validatePassword(formData.password)) {
+      setError("Password must include lowercase, uppercase, numbers, and special characters, and be at least 8 characters long");
+      setIsLoading(false);
       return;
     }
 
-    try{
-      const response = await axios.post('http://localhost:3001/api/auth/register')
+    try {
+      const response = await axios.post('http://localhost:3001/api/auth/register', {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        username: formData.username,
+        email: formData.email,
+        mobile: formData.mobile,
+        password: formData.password,
+      });
+      
       console.log(response.data);
       alert("Registration successful");
-      window.location.href = "/login";
+      navigate("/login");
+    } catch (error) {
+      setError(error.response?.data?.message || "An error occurred during registration");
+    } finally {
       setIsLoading(false);
-
     }
-    catch(error){
-      alert(error.response.data.message);
-      setIsLoading(true);
-    }
+  };
 
-    
-  }
   const handleSocialLogin = (provider) => {
     window.location.href = `http://localhost:3001/api/auth/${provider}`;
-    console.log(`${provider} login clicked`);
   };
 
   return (
@@ -101,6 +95,7 @@ const RegisterPage = () => {
       </div>
       <div className="register-container">
         <h1>Create an Account</h1>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleRegister}>
           <div className="name-fields">
             <div className="form-group">
@@ -135,6 +130,10 @@ const RegisterPage = () => {
               value={formData.username}
               onChange={handleChange}
               required
+              minLength="3"
+              maxLength="30"
+              pattern="^[a-zA-Z0-9_]+$"
+              title="Username can only contain letters, numbers, and underscores"
             />
           </div>
           <div className="form-group">
@@ -170,6 +169,7 @@ const RegisterPage = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                minLength="8"
               />
               <FontAwesomeIcon
                 icon={showPassword ? faEyeSlash : faEye}

@@ -1,7 +1,7 @@
 .register-page {
   display: flex;
   min-height: 100vh;
-  background-color: #f0f2f5;
+  background-color: #2273eb;
 }
 
 .register-img {
@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #e3e8ee;
+  background-color: #11a7bb;
 }
 
 .register-img img {
@@ -24,7 +24,7 @@
   flex-direction: column;
   justify-content: center;
   padding: 2rem;
-  background-color: var(--bg-secondary);
+  background-color: #2881c9;
   box-shadow: -10px 0 20px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
 }
