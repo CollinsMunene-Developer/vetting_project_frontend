@@ -1,126 +1,148 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import './AnswerQuestions.css';
+import "./General.css";
 
-const AnswerQuestions = ({ candidateId }) => {
-  const [questions, setQuestions] = useState({});
-  const [currentLanguage, setCurrentLanguage] = useState('');
-  const [currentLanguageIndex, setCurrentLanguageIndex] = useState(0);
+const api = axios.create({
+  baseURL: 'http://localhost:3001',
+  headers: {
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
+});
+
+const General = () => {
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchQuestions();
-  }, [candidateId]);
-
-  const fetchQuestions = async () => {
-    setIsLoading(true);
-    setError(null);
+  const fetchQuestions = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/candidate/submitLanguages${candidateId}`);
-      setQuestions(response.data.questions);
-      const languageKeys = Object.keys(response.data.questions);
-      setCurrentLanguage(languageKeys[0]);
-      setCurrentLanguageIndex(0);
+      const response = await api.get('/questions/generate-questions');
+      if (response.data && response.data.questions && response.data.questions.length > 0) {
+        setQuestions(response.data.questions);
+      } else {
+        throw new Error('No questions received from the server');
+      }
     } catch (error) {
-      console.error('Error fetching questions:', error);
-      setError('Failed to fetch questions. Please try again.');
+      console.error("Error fetching questions:", error);
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const handleAnswerChange = (questionId, value) => {
-    setAnswers(prev => ({
-      ...prev,
-      [currentLanguage]: {
-        ...prev[currentLanguage],
-        [questionId]: value,
-      },
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchQuestions();
+    } else {
+      setError("Please log in to generate questions");
+      navigate("/login");
+    }
+  }, [fetchQuestions, navigate]);
+
+  const handleAnswerChange = (questionId, answer) => {
+    setAnswers(prevAnswers => ({
+      ...prevAnswers,
+      [questionId]: answer
     }));
   };
 
-  const nextLanguage = () => {
-    const languageKeys = Object.keys(questions);
-    if (currentLanguageIndex < languageKeys.length - 1) {
-      setCurrentLanguageIndex(currentLanguageIndex + 1);
-      setCurrentLanguage(languageKeys[currentLanguageIndex + 1]);
+  const goToNextQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     }
   };
 
-  const prevLanguage = () => {
-    if (currentLanguageIndex > 0) {
-      setCurrentLanguageIndex(currentLanguageIndex - 1);
-      setCurrentLanguage(Object.keys(questions)[currentLanguageIndex - 1]);
+  const goToPreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prevIndex => prevIndex - 1);
     }
   };
 
   const submitAnswers = async () => {
-    setIsLoading(true);
-    setError(null);
+    setIsSubmitting(true);
     try {
-      await axios.post('http://localhost:3001/candidate/submitAnswers', {
-        candidateId,
-        answers: Object.entries(answers).flatMap(([language, languageAnswers]) =>
-          Object.entries(languageAnswers).map(([questionId, answer]) => ({
-            language,
-            questionId,
-            answer,
-          }))
-        ),
-      });
-      // Handle successful submission (e.g., show a success message or navigate to a results page)
+      const submissions = questions.map(question => ({
+        questionId: question._id,
+        answer: answers[question._id] || ""
+      }));
+
+      const response = await api.post("questions/submit-answer", { answers: submissions });
+      console.log("Submission response:", response.data);
+      navigate("/technical");
     } catch (error) {
-      console.error('Error submitting answers:', error);
-      setError('Failed to submit answers. Please try again.');
+      console.error("Error submitting answers:", error);
+      setError("Failed to submit answers. Please try again.");
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   if (isLoading) {
-    return <div className="loader">Loading...</div>;
+    return <div className="loading">Loading questions...</div>;
   }
 
   if (error) {
-    return <div className="error-message">{error}</div>;
+    return <div className="error">Error: {error}</div>;
   }
 
+  if (questions.length === 0) {
+    return <div className="no-questions">No questions available. Please try again later.</div>;
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+
   return (
-    <div className="answer-questions">
-      <h2>Technical Questions - {currentLanguage}</h2>
-      {questions[currentLanguage] && questions[currentLanguage].map((q, index) => (
-        <div key={index} className="question-container">
-          <p className="question-text">{q.question}</p>
-          <textarea
-            value={answers[currentLanguage]?.[q.id] || ''}
-            onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-            placeholder="Your answer"
-            required
-            className="answer-field"
-            rows={5}
-          />
+    <div className="general-page">
+      <div className="question-container">
+        <h1>General Questions</h1>
+        <div className="progress-bar">
+          <div 
+            className="progress" 
+            style={{width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`}}
+          ></div>
         </div>
-      ))}
-      <div className="navigation-buttons">
-        {currentLanguageIndex > 0 && (
-          <button onClick={prevLanguage} className="btn btn-secondary">
-            Previous Language
+        <h2 className="question-number">Question {currentQuestionIndex + 1} of {questions.length}</h2>
+        <p className="question">{currentQuestion.question}</p>
+        <textarea
+          value={answers[currentQuestion._id] || ""}
+          onChange={(e) => handleAnswerChange(currentQuestion._id, e.target.value)}
+          placeholder="Type your answer here..."
+          rows="4"
+        ></textarea>
+        <div className="navigation-buttons">
+          <button 
+            onClick={goToPreviousQuestion} 
+            disabled={currentQuestionIndex === 0}
+            className="btn btn-secondary"
+          >
+            Previous
           </button>
-        )}
-        {currentLanguageIndex < Object.keys(questions).length - 1 ? (
-          <button onClick={nextLanguage} className="btn">
-            Next Language
-          </button>
-        ) : (
-          <button onClick={submitAnswers} className="btn" disabled={isLoading}>
-            {isLoading ? 'Submitting...' : 'Submit All Answers'}
-          </button>
-        )}
+          {currentQuestionIndex === questions.length - 1 ? (
+            <button 
+              onClick={submitAnswers} 
+              className={`btn btn-submit ${isSubmitting ? 'loading' : ''}`}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit All Answers'}
+            </button>
+          ) : (
+            <button 
+              onClick={goToNextQuestion} 
+              className="btn btn-primary"
+            >
+              Next
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default AnswerQuestions;
+export default General;

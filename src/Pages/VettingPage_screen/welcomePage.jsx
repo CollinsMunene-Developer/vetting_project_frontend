@@ -1,25 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./welcomePage.css";
 
+const api = axios.create({
+  baseURL: 'http://localhost:3001',
+  headers: {
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
+});
+
 const WelcomePage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError("Please log in to start the interview");
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const startInterview = async () => {
     setIsLoading(true);
+    setError(null);
     try {
-      const response = await axios.get(
-        "http://localhost:3001/questions/generate-questions "
-      );
-      if (response.status === 200) {
-        navigate("/general");
+      console.log("Starting interview...");
+      const response = await api.get("/questions/generate-questions");
+      console.log("Response received:", response);
+      if (response.status === 200 && response.data.questions) {
+        console.log("Navigating to /general");
+        navigate("/general", { state: { questions: response.data.questions } });
       } else {
-        console.error("Unexpected response from server:", response.status);
+        throw new Error("Unexpected response from server");
       }
     } catch (error) {
       console.error("Error starting interview:", error);
+      setError(`Error starting interview: ${error.message}. Please try again.`);
     } finally {
       setIsLoading(false);
     }
@@ -41,6 +60,7 @@ const WelcomePage = () => {
           >
             {isLoading ? 'Starting Interview...' : 'Start Interview Now'}
           </button>
+          {error && <p className="error-message">{error}</p>}
         </header>
 
         <section className="card guidelines-card">

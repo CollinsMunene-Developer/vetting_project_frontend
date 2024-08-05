@@ -4,7 +4,10 @@ import axios from 'axios';
 import "./General.css";
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001'
+  baseURL: 'http://localhost:3001',
+  headers: {
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
 });
 
 const General = () => {
@@ -33,8 +36,14 @@ const General = () => {
   }, []);
 
   useEffect(() => {
-    fetchQuestions();
-  }, [fetchQuestions]);
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchQuestions();
+    } else {
+      setError("Please log in to generate questions");
+      navigate("/login");
+    }
+  }, [fetchQuestions, navigate]);
 
   const handleAnswerChange = (questionId, answer) => {
     setAnswers(prevAnswers => ({
