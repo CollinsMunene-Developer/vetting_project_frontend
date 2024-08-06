@@ -11,6 +11,7 @@ import WelcomePage from "./Pages/VettingPage_screen/welcomePage";
 import UserDashboard from "./Pages/Dashboard/userDashboard";
 import AnswerQuestions from "./Pages/VettingPage_screen/AnswerQuestions";
 import ThankYouPage from "./Pages/VettingPage_screen/ThanYouPage";
+import CompletionNotice from "./Pages/VettingPage_screen/CompletionNotice";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/answer" element={<AnswerQuestions />} />
         <Route path="/evaluation" element={<ThankYouPage />} />
+        <Route path="/completion-notice" element={<CompletionNotice />} />
       </Routes>
     </Router>
   )

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Hero_1.css";
 import { openai } from "../../assets/assets";
+import { useNavigate } from "react-router-dom";
 
 const Hero_1 = () => {
   const [isRotated, setIsRotated] = useState(false);
@@ -10,6 +11,10 @@ const Hero_1 = () => {
     setTimeout(() => setIsRotated(false), 300);
   };
 
+  const navigate = useNavigate();
+  const handleStartVetting = () => {
+    navigate("/welcome");
+  };
   return (
     <>
       <div className="container">
@@ -24,13 +29,13 @@ const Hero_1 = () => {
           <img
             src={openai}
             alt="OpenAI"
-            style={{ transform: isRotated ? 'rotate(10deg)' : 'none' }}
+            style={{ transform: isRotated ? "rotate(10deg)" : "none" }}
             onTouchStart={handleTouch}
             onTouchEnd={() => setIsRotated(false)}
           />
         </div>
         <div className="hero_1_btn">
-          <button>start Vetting</button>
+          <button onClick={handleStartVetting}>start Vetting</button>
         </div>
       </div>
     </>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Technical.css";
@@ -24,26 +24,34 @@ const Technical = () => {
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
   const [error, setError] = useState(null);
 
+  const checkAuth = useCallback(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.alert("You are not logged in. Please log in to continue.");
+      navigate("/login");
+      return false;
+    }
+    return true;
+  }, [navigate]);
+
   useEffect(() => {
+    if (!checkAuth()) return;
+
     const savedProgress = localStorage.getItem("vettingProgress");
     if (savedProgress) {
       const progress = JSON.parse(savedProgress);
       setStep(progress.step);
       setCandidateId(progress.candidateId);
     }
-  }, []);
+  }, [checkAuth]);
 
   useEffect(() => {
-    saveProgress();
-  }, [step, candidateId]);
-
-  const saveProgress = () => {
     const progress = {
       step,
       candidateId,
     };
     localStorage.setItem("vettingProgress", JSON.stringify(progress));
-  };
+  }, [step, candidateId]);
 
   const handleDetailsChange = (e) => {
     setCandidateDetails({
@@ -65,14 +73,26 @@ const Technical = () => {
     });
   };
 
+  const getAuthHeaders = useCallback(() => {
+    const token = localStorage.getItem('token');
+    return {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    };
+  }, []);
+
   const submitDetails = async (e) => {
     e.preventDefault();
+    if (!checkAuth()) return;
+
     setIsLoading(true);
     setError(null);
     try {
       const response = await axios.post(
         "http://localhost:3001/candidate/submitDetails",
-        candidateDetails
+        candidateDetails,
+        getAuthHeaders()
       );
       setCandidateId(response.data.candidateId);
       setStep(2);
@@ -86,6 +106,8 @@ const Technical = () => {
 
   const submitLanguages = async (e) => {
     e.preventDefault();
+    if (!checkAuth()) return;
+
     if (!candidateId) {
       setError(
         "Candidate ID is missing. Please go back and submit your details first."
@@ -106,7 +128,8 @@ const Technical = () => {
               years: lang.years,
               level: lang.level,
             })),
-        }
+        },
+        getAuthHeaders()
       );
       setQuestions(response.data.questions);
       setStep(3);
@@ -119,6 +142,8 @@ const Technical = () => {
   };
 
   const submitAnswers = async () => {
+    if (!checkAuth()) return;
+
     setIsLoading(true);
     setError(null);
     try {
@@ -136,7 +161,8 @@ const Technical = () => {
         {
           candidateId,
           answers: formattedAnswers,
-        }
+        },
+        getAuthHeaders()
       );
       navigate("/evaluation");
     } catch (error) {
@@ -300,6 +326,10 @@ const Technical = () => {
         return null;
     }
   };
+
+  if (!checkAuth()) {
+    return null; // Prevent rendering if not authenticated
+  }
 
   return (
     <div className="technical-page">

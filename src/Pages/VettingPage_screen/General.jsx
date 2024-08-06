@@ -21,7 +21,7 @@ const General = () => {
 
   const fetchQuestions = useCallback(async () => {
     try {
-      const response = await api.get('/questions/generate-questions');
+      const response = await api.get('/questions/generate-questions');  
       if (response.data && response.data.questions && response.data.questions.length > 0) {
         setQuestions(response.data.questions);
       } else {
@@ -73,13 +73,18 @@ const General = () => {
       }));
 
       await api.post("questions/submit-answer", { answers: submissions });
-      navigate("/technical");
+      navigate("/completion-notice");
     } catch (error) {
       console.error("Error submitting answers:", error);
       setError("Failed to submit answers. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const isCurrentQuestionAnswered = () => {
+    const currentQuestion = questions[currentQuestionIndex];
+    return answers[currentQuestion._id] && answers[currentQuestion._id].trim() !== "";
   };
 
   if (isLoading) {
@@ -114,6 +119,9 @@ const General = () => {
           placeholder="Type your answer here..."
           rows="4"
         ></textarea>
+        {!isCurrentQuestionAnswered() && (
+          <p className="error-message">Please answer the question before proceeding.</p>
+        )}
         <div className="navigation-buttons">
           <button 
             onClick={goToPreviousQuestion} 
@@ -126,7 +134,7 @@ const General = () => {
             <button 
               onClick={submitAnswers} 
               className={`btn btn-submit ${isSubmitting ? 'loading' : ''}`}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isCurrentQuestionAnswered()}
             >
               {isSubmitting ? 'Submitting...' : 'Submit All Answers'}
             </button>
@@ -134,6 +142,7 @@ const General = () => {
             <button 
               onClick={goToNextQuestion} 
               className="btn btn-primary"
+              disabled={!isCurrentQuestionAnswered()}
             >
               Next
             </button>

@@ -1,0 +1,75 @@
+.completion-notice {
+    background-color: var(--bg-secondary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .completion-notice .container {
+    background-color: var(--bg-primary);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-xl);
+    max-width: 800px;
+    margin: var(--spacing-xl) auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .completion-notice h1 {
+    color: var(--accent-color);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .completion-notice .congratulations {
+    font-size: var(--font-size-medium);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .completion-notice .instructions {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .completion-notice .instructions h2 {
+    color: var(--accent-color);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .completion-notice .instructions ul {
+    padding-left: var(--spacing-lg);
+  }
+  
+  .completion-notice .instructions li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+  }
+  
+  .completion-notice .good-luck {
+    font-size: var(--font-size-medium);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .completion-notice .continue-btn {
+    font-size: var(--font-size-normal);
+    padding: var(--spacing-md) var(--spacing-lg);
+    width: 100%;
+  }
+  
+  @media (max-width: 768px) {
+    .completion-notice .container {
+      margin: var(--spacing-md);
+      padding: var(--spacing-lg);
+    }
+  
+    .completion-notice h1 {
+      font-size: var(--font-size-large);
+    }
+  
+    .completion-notice .instructions {
+      padding: var(--spacing-md);
+    }
+  }
