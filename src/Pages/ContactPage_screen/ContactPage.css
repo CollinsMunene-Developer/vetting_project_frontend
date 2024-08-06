@@ -1,0 +1,115 @@
+.contact-page {
+    padding: var(--spacing-xl) 0;
+    background-color: var(--bg-secondary);
+  }
+  
+  .contact-intro {
+    text-align: center;
+    font-size: var(--font-size-medium);
+    color: var(--text-secondary);
+    max-width: 800px;
+    margin: 0 auto var(--spacing-lg);
+  }
+  
+  .contact-content {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+  }
+  
+  .contact-form,
+  .contact-info {
+    flex: 1;
+    background-color: var(--bg-primary);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  h2 {
+    font-size: var(--font-size-large);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .form-group {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-secondary);
+  }
+  
+  input,
+  textarea {
+    width: 100%;
+    padding: var(--spacing-sm);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--text-secondary);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-normal);
+    color: var(--text-primary);
+  }
+  
+  textarea {
+    height: 150px;
+    resize: vertical;
+  }
+  
+  .btn {
+    background-color: var(--accent-color);
+    color: var(--text-primary);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-normal);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn:hover {
+    background-color: var(--accent-hover);
+  }
+  
+  .info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .info-item svg {
+    font-size: var(--font-size-medium);
+    color: var(--accent-color);
+    margin-right: var(--spacing-sm);
+  }
+  
+  .info-item p {
+    color: var(--text-secondary);
+  }
+  
+  .map-container {
+    margin-top: var(--spacing-lg);
+  }
+  
+  .map-placeholder {
+    background-color: var(--bg-secondary);
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--border-radius);
+    color: var(--text-secondary);
+  }
+  
+  @media (max-width: 768px) {
+    .contact-content {
+      flex-direction: column;
+    }
+  
+    .contact-form,
+    .contact-info {
+      width: 100%;
+    }
+  }
