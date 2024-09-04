@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEye,
+  faEyeSlash,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
 import { faGoogle, faMicrosoft } from "@fortawesome/free-brands-svg-icons";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -43,7 +47,8 @@ const RegisterPage = () => {
   };
 
   const validatePassword = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
     return regex.test(password);
   };
 
@@ -59,26 +64,33 @@ const RegisterPage = () => {
     }
 
     if (!validatePassword(formData.password)) {
-      setError("Password must include lowercase, uppercase, numbers, and special characters, and be at least 8 characters long");
+      setError(
+        "Password must include lowercase, uppercase, numbers, and special characters, and be at least 8 characters long"
+      );
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:3001/api/auth/register', {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        username: formData.username,
-        email: formData.email,
-        mobile: formData.mobile,
-        password: formData.password,
-      });
-      
+      const response = await axios.post(
+        "http://localhost:3001/api/auth/register",
+        {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          username: formData.username,
+          email: formData.email,
+          mobile: formData.mobile,
+          password: formData.password,
+        }
+      );
+
       console.log(response.data);
       alert("Registration successful");
       navigate("/login");
     } catch (error) {
-      setError(error.response?.data?.message || "An error occurred during registration");
+      setError(
+        error.response?.data?.message || "An error occurred during registration"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -201,19 +213,21 @@ const RegisterPage = () => {
             className="btn btn-register"
             disabled={isLoading}
           >
-            {isLoading ? (
-              <FontAwesomeIcon icon={faSpinner} spin />
-            ) : (
-              "Register"
-            )}
+            {isLoading ? <FontAwesomeIcon icon={faSpinner} spin /> : "Register"}
           </button>
         </form>
         <div className="social-login">
           <p>Or continue with:</p>
-          <button onClick={() => handleSocialLogin('google')} className="btn btn-secondary">
+          <button
+            onClick={() => handleSocialLogin("google")}
+            className="btn btn-secondary"
+          >
             <FontAwesomeIcon icon={faGoogle} /> Google
           </button>
-          <button onClick={() => handleSocialLogin('microsoft')} className="btn btn-secondary">
+          <button
+            onClick={() => handleSocialLogin("microsoft")}
+            className="btn btn-secondary"
+          >
             <FontAwesomeIcon icon={faMicrosoft} /> Microsoft
           </button>
         </div>

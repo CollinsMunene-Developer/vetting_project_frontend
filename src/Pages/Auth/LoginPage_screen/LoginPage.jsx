@@ -31,11 +31,11 @@ const LoginPage = () => {
     setError("");
     setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:3001/api/auth/login', formData);
-      console.log('Login success:', response.data);
-      localStorage.setItem('token', response.data.token);
+
       navigate('/');
-      window.location.reload();
+          const response = await axios.post('http://localhost:3001/api/auth/login', formData);
+      console.log('Login success:', response.data);
+        localStorage.setItem('token', response.data.token);  window.location.reload();
     } catch (error) {
       console.error('Login failed:', error);
       setError(error.response?.data?.message || "An error occurred during login");

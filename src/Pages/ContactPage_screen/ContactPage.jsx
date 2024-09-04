@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faPhone, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import './ContactPage.css';
+import axios from 'axios';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -15,14 +16,24 @@ const ContactPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     // Handle form submission logic here
+    try {
+      const response = await axios.post('https://api.example.com/contact', formData);
+      window.alert('Form submitted successfully!');
+      console.log('Form submitted successfully:', response.data);
+    }
+    catch (error) {
+      console.error('Error submitting form:', error);
+      window.alert('An error occurred while submitting the form. Please try again later.');
+    }
+    
     console.log('Form submitted:', formData);
     // Reset form after submission
     setFormData({ name: '', email: '', subject: '', message: '' });
   };
-
+  
   return (
     <div className="contact-page">
       <div className="container">
