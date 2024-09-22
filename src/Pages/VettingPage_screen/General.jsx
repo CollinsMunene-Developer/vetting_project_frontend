@@ -4,7 +4,7 @@ import axios from 'axios';
 import "./General.css";
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: 'https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io',
   headers: {
     'Authorization': `Bearer ${localStorage.getItem('token')}`
   }

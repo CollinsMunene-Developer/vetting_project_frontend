@@ -19,7 +19,7 @@ const ResetPassword = () => {
     setError('');
     setMessage('');
     try {
-      const response = await axios.post('http://localhost:3001/api/auth/reset-password', { email });
+      const response = await axios.post('https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io/api/auth/reset-password', { email });
       console.log('Reset requested for:', email);
       setMessage(response.data.message);
       setStep('verify');
@@ -34,7 +34,7 @@ const ResetPassword = () => {
     setError('');
     setMessage('');
     try {
-      const response = await axios.post('http://localhost:3001/api/auth/verify-reset-token', {
+      const response = await axios.post('https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io/api/auth/verify-reset-token', {
         email,
         token: verificationCode
       });
@@ -56,7 +56,7 @@ const ResetPassword = () => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:3001/api/auth/set-new-password', {
+      const response = await axios.post('https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io/api/auth/set-new-password', {
         email,
         token: verificationCode,
         newPassword

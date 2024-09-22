@@ -73,7 +73,7 @@ const RegisterPage = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/auth/register",
+        "https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io/api/auth/register",
         {
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -97,7 +97,7 @@ const RegisterPage = () => {
   };
 
   const handleSocialLogin = (provider) => {
-    window.location.href = `http://localhost:3001/api/auth/${provider}`;
+    window.location.href = `https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io/api/auth/${provider}`;
   };
 
   return (

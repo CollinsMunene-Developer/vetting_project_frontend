@@ -90,7 +90,7 @@ const Technical = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:3001/candidate/submitDetails",
+        "https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io/candidate/submitDetails",
         candidateDetails,
         getAuthHeaders()
       );
@@ -118,7 +118,7 @@ const Technical = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:3001/candidate/submitLanguages",
+        "https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io/candidate/submitLanguages",
         {
           candidateId,
           languages: languages
@@ -157,7 +157,7 @@ const Technical = () => {
       });
 
       await axios.post(
-        "http://localhost:3001/candidate/submitAnswers",
+        "https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io/candidate/submitAnswers",
         {
           candidateId,
           answers: formattedAnswers,

@@ -33,7 +33,7 @@ const LoginPage = () => {
     try {
 
       navigate('/');
-          const response = await axios.post('http://localhost:3001/api/auth/login', formData);
+          const response = await axios.post('https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io/api/auth/login', formData);
       console.log('Login success:', response.data);
         localStorage.setItem('token', response.data.token);  window.location.reload();
     } catch (error) {

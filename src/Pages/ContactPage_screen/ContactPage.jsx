@@ -20,7 +20,7 @@ const ContactPage = () => {
     e.preventDefault();
     // Handle form submission logic here
     try {
-      const response = await axios.post('https://api.example.com/contact', formData);
+      const response = await axios.post('https://vettingapp1.politebeach-597682cf.westus2.azurecontainerapps.io/contact', formData);
       window.alert('Form submitted successfully!');
       console.log('Form submitted successfully:', response.data);
     }
